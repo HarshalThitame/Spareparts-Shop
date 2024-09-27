@@ -1,13 +1,8 @@
 package com.sparesparts.controller;
 
-import com.sparesparts.entity.Category;
-import com.sparesparts.entity.Product;
-import com.sparesparts.entity.Review;
-import com.sparesparts.entity.SubCategory;
-import com.sparesparts.service.CategoryService;
-import com.sparesparts.service.ProductService;
-import com.sparesparts.service.ReviewService;
-import com.sparesparts.service.SubCategoryService;
+import com.sparesparts.entity.*;
+import com.sparesparts.service.*;
+import com.sparesparts.services.BrandService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,12 +22,16 @@ public class GeneralController {
     private final ReviewService reviewService;
     private final ProductService productService;
     private final SubCategoryService subCategoryService;
+    private final BrandService brandService;
+    private final BrandModelService brandModelService;
     @Autowired
-    public GeneralController(CategoryService categoryService, ReviewService reviewService, ProductService productService, SubCategoryService subCategoryService) {
+    public GeneralController(CategoryService categoryService, ReviewService reviewService, ProductService productService, SubCategoryService subCategoryService, com.sparesparts.services.BrandService brandService, BrandModelService brandModelService) {
         this.categoryService = categoryService;
         this.reviewService = reviewService;
         this.productService = productService;
         this.subCategoryService = subCategoryService;
+        this.brandService = brandService;
+        this.brandModelService = brandModelService;
     }
 
     /**
@@ -68,6 +67,42 @@ public class GeneralController {
     @GetMapping("/reviews/{productId}")
     public ResponseEntity<List<Review>> getReviewsByProductId(@PathVariable Long productId) {
         return ResponseEntity.ok(reviewService.getReviewsByProductId(productId));
+    }
+
+    /**
+     * Get all brands.
+     *
+     * @return List of brands.
+     */
+    @GetMapping("/brands")
+    public ResponseEntity<List<Brand>> getAllBrands() {
+        List<Brand> brands = brandService.getAllBrands(); // Fetch all brands from the service
+        return ResponseEntity.ok(brands); // Return the list of brands with a 200 OK status
+    }
+
+    /**
+     * Get all brand models.
+     *
+     * @return List of brand models.
+     */
+    @GetMapping("/brand-models")
+    public ResponseEntity<List<BrandModel>> getAllBrandModels() {
+        List<BrandModel> brandModels = brandModelService.getAllBrandModels(); // Fetch all brand models from the service
+        return ResponseEntity.ok(brandModels); // Return the list of brand models with a 200 OK status
+    }
+    /**
+     * Get all BrandModels by Brand ID.
+     *
+     * @param brandId The ID of the brand.
+     * @return List of BrandModels associated with the brand.
+     */
+    @GetMapping("/brand-models/{brandId}")
+    public ResponseEntity<List<BrandModel>> getBrandModelsByBrandId(@PathVariable Long brandId) {
+        List<BrandModel> brandModels = brandModelService.getBrandModelsByBrandId(brandId);
+        if (brandModels.isEmpty()) {
+            return ResponseEntity.noContent().build(); // Return 204 if no models found
+        }
+        return ResponseEntity.ok(brandModels); // Return the list of brand models
     }
 
     /**
@@ -129,4 +164,99 @@ public class GeneralController {
         }
         return ResponseEntity.ok(products); // Return the list of products
     }
+
+    /**
+     * Search for products by brand ID, brand model ID, and category ID.
+     *
+     * @param brandId      the ID of the brand
+     * @param brandModelId the ID of the brand model
+     * @param categoryId   the ID of the category
+     * @return a list of products matching the specified criteria
+     */
+    @GetMapping("/searchByBrandsAndBrandModelAndCategory/{brandId}/{brandModelId}/{categoryId}")
+    public List<Product> searchByBrandsAndBrandModelAndCategory(
+            @PathVariable Long brandId,
+            @PathVariable Long brandModelId,
+            @PathVariable Long categoryId) {
+        return productService.searchByBrandsAndBrandModelAndCategory(brandId, brandModelId, categoryId);
+    }
+
+    /**
+     * Search for products by brand ID and brand model ID.
+     *
+     * @param brandId      the ID of the brand
+     * @param brandModelId the ID of the brand model
+     * @return a list of products matching the specified criteria
+     */
+    @GetMapping("/searchByBrandAndModel/{brandId}/{brandModelId}")
+    public List<Product> searchByBrandAndModel(
+            @PathVariable Long brandId,
+            @PathVariable Long brandModelId) {
+        return productService.searchByBrandAndModel(brandId, brandModelId);
+    }
+
+    /**
+     * Search for products by brand ID and category ID.
+     *
+     * @param brandId    the ID of the brand
+     * @param categoryId the ID of the category
+     * @return a list of products matching the specified criteria
+     */
+    @GetMapping("/searchByBrandAndCategory/{brandId}/{categoryId}")
+    public List<Product> searchByBrandAndCategory(
+            @PathVariable Long brandId,
+            @PathVariable Long categoryId) {
+        return productService.searchByBrandAndCategory(brandId, categoryId);
+    }
+
+    /**
+     * Search for products by brand model ID and category ID.
+     *
+     * @param brandModelId the ID of the brand model
+     * @param categoryId   the ID of the category
+     * @return a list of products matching the specified criteria
+     */
+    @GetMapping("/searchByModelAndCategory/{brandModelId}/{categoryId}")
+    public List<Product> searchByModelAndCategory(
+            @PathVariable Long brandModelId,
+            @PathVariable Long categoryId) {
+        return productService.searchByModelAndCategory(brandModelId, categoryId);
+    }
+
+    /**
+     * Search for products by brand ID.
+     *
+     * @param brandId the ID of the brand
+     * @return a list of products matching the specified criteria
+     */
+    @GetMapping("/searchByBrand/{brandId}")
+    public List<Product> searchByBrand(
+            @PathVariable Long brandId) {
+        return productService.searchByBrand(brandId);
+    }
+
+    /**
+     * Search for products by brand model ID.
+     *
+     * @param brandModelId the ID of the brand model
+     * @return a list of products matching the specified criteria
+     */
+    @GetMapping("/searchByModel/{brandModelId}")
+    public List<Product> searchByModel(
+            @PathVariable Long brandModelId) {
+        return productService.searchByModel(brandModelId);
+    }
+
+    /**
+     * Search for products by category ID.
+     *
+     * @param categoryId the ID of the category
+     * @return a list of products matching the specified criteria
+     */
+    @GetMapping("/searchByCategory/{categoryId}")
+    public List<Product> searchByCategory(
+            @PathVariable Long categoryId) {
+        return productService.searchByCategory(categoryId);
+    }
+
 }

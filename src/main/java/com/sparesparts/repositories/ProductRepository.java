@@ -3,6 +3,8 @@ package com.sparesparts.repositories;
 import com.sparesparts.entity.Category;
 import com.sparesparts.entity.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -34,4 +36,51 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByPriceBetween(double minPrice, double maxPrice);
 
     List<Product> findBySubCategoriesId(Long subCategoryId);
+
+    @Query("SELECT p FROM Product p " +
+            "JOIN p.brands b " +
+            "JOIN p.brandModels bm " +
+            "JOIN p.categories c " +
+            "WHERE b.id = :brandId " +
+            "AND bm.id = :brandModelId " +
+            "AND c.id = :categoryId")
+    List<Product> findByBrandIdBrandModelIdCategoryId(@Param("brandId") Long brandId,
+                                                      @Param("brandModelId") Long brandModelId,
+                                                      @Param("categoryId") Long categoryId);
+
+    @Query("SELECT p FROM Product p " +
+            "JOIN p.brands b " +
+            "JOIN p.brandModels bm " +
+            "WHERE b.id = :brandId AND bm.id = :brandModelId")
+    List<Product> findByBrandIdAndBrandModelId(@Param("brandId") Long brandId,
+                                               @Param("brandModelId") Long brandModelId);
+
+    @Query("SELECT p FROM Product p " +
+            "JOIN p.brands b " +
+            "JOIN p.categories c " +
+            "WHERE b.id = :brandId AND c.id = :categoryId")
+    List<Product> findByBrandIdAndCategoryId(@Param("brandId") Long brandId,
+                                             @Param("categoryId") Long categoryId);
+
+    @Query("SELECT p FROM Product p " +
+            "JOIN p.brandModels bm " +
+            "JOIN p.categories c " +
+            "WHERE bm.id = :brandModelId AND c.id = :categoryId")
+    List<Product> findByBrandModelIdAndCategoryId(@Param("brandModelId") Long brandModelId,
+                                                  @Param("categoryId") Long categoryId);
+
+    @Query("SELECT p FROM Product p " +
+            "JOIN p.brands b " +
+            "WHERE b.id = :brandId")
+    List<Product> findByBrandId(@Param("brandId") Long brandId);
+
+    @Query("SELECT p FROM Product p " +
+            "JOIN p.brandModels bm " +
+            "WHERE bm.id = :brandModelId")
+    List<Product> findByBrandModelId(@Param("brandModelId") Long brandModelId);
+
+    @Query("SELECT p FROM Product p " +
+            "JOIN p.categories c " +
+            "WHERE c.id = :categoryId")
+    List<Product> findByCategoryId(@Param("categoryId") Long categoryId);
 }

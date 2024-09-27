@@ -59,9 +59,9 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
 
+
     @Override
     public Optional<Category> updateCategory(Long id, Category category) {
-        System.out.println(category);
 
         // Check if category exists by ID
         return categoryRepository.findById(id).map(existingCategory -> {

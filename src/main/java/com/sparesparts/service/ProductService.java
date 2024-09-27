@@ -1,8 +1,10 @@
 package com.sparesparts.service;
 
 import com.sparesparts.entity.Product;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -53,5 +55,70 @@ public interface ProductService {
     List<Product> saveMultipleProducts(List<Product> products);
 
     List<Product> getProductsBySubCategoryId(Long subCategoryId);
+
+    /**
+     * Search for products by brand ID, brand model ID, and category ID.
+     *
+     * @param brandId      the ID of the brand
+     * @param brandModelId the ID of the brand model
+     * @param categoryId   the ID of the category
+     * @return a list of products matching the specified criteria
+     */
+    List<Product> searchByBrandsAndBrandModelAndCategory(Long brandId, Long brandModelId, Long categoryId);
+
+    /**
+     * Search for products by brand ID and brand model ID.
+     *
+     * @param brandId      the ID of the brand
+     * @param brandModelId the ID of the brand model
+     * @return a list of products matching the specified criteria
+     */
+    List<Product> searchByBrandAndModel(Long brandId, Long brandModelId);
+
+    /**
+     * Search for products by brand ID and category ID.
+     *
+     * @param brandId    the ID of the brand
+     * @param categoryId the ID of the category
+     * @return a list of products matching the specified criteria
+     */
+    List<Product> searchByBrandAndCategory(Long brandId, Long categoryId);
+
+    /**
+     * Search for products by brand model ID and category ID.
+     *
+     * @param brandModelId the ID of the brand model
+     * @param categoryId   the ID of the category
+     * @return a list of products matching the specified criteria
+     */
+    List<Product> searchByModelAndCategory(Long brandModelId, Long categoryId);
+
+    /**
+     * Search for products by brand ID.
+     *
+     * @param brandId the ID of the brand
+     * @return a list of products matching the specified criteria
+     */
+    List<Product> searchByBrand(Long brandId);
+
+    /**
+     * Search for products by brand model ID.
+     *
+     * @param brandModelId the ID of the brand model
+     * @return a list of products matching the specified criteria
+     */
+    List<Product> searchByModel(Long brandModelId);
+
+    /**
+     * Search for products by category ID.
+     *
+     * @param categoryId the ID of the category
+     * @return a list of products matching the specified criteria
+     */
+    List<Product> searchByCategory(Long categoryId);
+
+
+    public Map<String, Object> saveProductsFromCSV(MultipartFile file);
+
 }
 

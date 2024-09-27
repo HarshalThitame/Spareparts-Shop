@@ -1,15 +1,19 @@
 package com.sparesparts.service.serviceImpl;
 
+import com.opencsv.CSVReader;
 import com.sparesparts.entity.*;
 import com.sparesparts.repositories.*;
 import com.sparesparts.service.ProductService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -70,6 +74,10 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public Product saveProduct(Product product) {
+
+        Optional<Product> productById = productRepository.findById(product.getId());
+        productById.ifPresent(value -> product.setCreatedAt(value.getCreatedAt()));
+
         // Fetch and manage categories
         List<Category> existingCategories = categoryRepository.findAllById(
                 product.getCategories().stream().map(Category::getId).collect(Collectors.toList()));
@@ -91,6 +99,7 @@ public class ProductServiceImpl implements ProductService {
         List<SubCategory> existingSubCategories = subCategoryRepository.findAllById(
                 product.getSubCategories().stream().map(SubCategory::getId).collect(Collectors.toList()));
         product.setSubCategories(existingSubCategories);
+
 
         // Save the product with all managed entities
         return productRepository.save(product);
@@ -130,6 +139,172 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> getProductsBySubCategoryId(Long subCategoryId) {
         return productRepository.findBySubCategoriesId(subCategoryId);
+    }
+
+
+    @Override
+    public List<Product> searchByBrandsAndBrandModelAndCategory(Long brandId, Long brandModelId, Long categoryId) {
+        // Call the repository method to find products by brand, model, and category
+        return productRepository.findByBrandIdBrandModelIdCategoryId(brandId, brandModelId, categoryId);
+    }
+
+    @Override
+    public List<Product> searchByBrandAndModel(Long brandId, Long brandModelId) {
+        // Call the repository method to find products by brand and model
+        return productRepository.findByBrandIdAndBrandModelId(brandId, brandModelId);
+    }
+
+    @Override
+    public List<Product> searchByBrandAndCategory(Long brandId, Long categoryId) {
+        // Call the repository method to find products by brand and category
+        return productRepository.findByBrandIdAndCategoryId(brandId, categoryId);
+    }
+
+    @Override
+    public List<Product> searchByModelAndCategory(Long brandModelId, Long categoryId) {
+        // Call the repository method to find products by brand model and category
+        return productRepository.findByBrandModelIdAndCategoryId(brandModelId, categoryId);
+    }
+
+    @Override
+    public List<Product> searchByBrand(Long brandId) {
+        // Call the repository method to find products by brand
+        return productRepository.findByBrandId(brandId);
+    }
+
+    @Override
+    public List<Product> searchByModel(Long brandModelId) {
+        // Call the repository method to find products by brand model
+        return productRepository.findByBrandModelId(brandModelId);
+    }
+
+    @Override
+    public List<Product> searchByCategory(Long categoryId) {
+        // Call the repository method to find products by category
+        return productRepository.findByCategoryId(categoryId);
+    }
+
+    @Override
+    public Map<String, Object> saveProductsFromCSV(MultipartFile file) {
+        int successCount = 0;
+        int errorCount = 0;
+        List<Product> failedProducts = new ArrayList<>();
+        List<String> errorMessages = new ArrayList<>();
+
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+            String line;
+            boolean isFirstLine = true; // Flag to skip header
+            while ((line = br.readLine()) != null) {
+
+
+                String[] lineData = line.split(","); // Adjust as necessary
+                Product product = null;
+                try {
+                    product = new Product();
+                    product.setName(lineData[0]);
+                    product.setDescription(lineData[1]);
+                    product.setPrice(Double.parseDouble(lineData[2]));
+                    product.setPartNumber(lineData[3]);
+                    product.setMoq(Integer.parseInt(lineData[4]));
+                    product.setStockQuantity(Integer.parseInt(lineData[5]));
+                    product.setWeight(Double.parseDouble(lineData[6]));
+                    product.setDimensions(lineData[7]);
+                    product.setMaterial(lineData[8]);
+                    product.setMainImage(lineData[9]);
+                    product.setPublishedForCustomer(Boolean.parseBoolean(lineData[10]));
+
+
+                    // Process Brands
+                    List<Brand> brands = new ArrayList<>();
+                    for (String brandName : lineData[11].split(";")) {
+                        Brand brand = brandRepository.findByName(brandName.trim());
+//                        if (brand == null) {
+//                            brand = new Brand();
+//                            brand.setName(brandName.trim());
+//                            brand = brandRepository.save(brand);
+//                        }
+                        brands.add(brand);
+                    }
+                    product.setBrands(brands);
+
+                    // Process Brand Models
+                    List<BrandModel> brandModels = new ArrayList<>();
+                    for (String brandModelName : lineData[12].split(";")) {
+                        BrandModel brandModel = brandModelRepository.findByName(brandModelName.trim());
+//                        if (brandModel == null) {
+//                            brandModel = new BrandModel();
+//                            brandModel.setName(brandModelName.trim());
+//                            brandModel = brandModelRepository.save(brandModel);
+//                        }
+                        brandModels.add(brandModel);
+                    }
+                    product.setBrandModels(brandModels);
+
+                    // Process Categories
+                    List<Category> categories = new ArrayList<>();
+                    for (String categoryName : lineData[13].split(";")) {
+                        Category category = categoryRepository.findByName(categoryName.trim()).orElse(null);
+//                        if (category == null) {
+//                            category = new Category();
+//                            category.setName(categoryName.trim());
+//                            category = categoryRepository.save(category);
+//                        }
+                        categories.add(category);
+                    }
+                    product.setCategories(categories);
+
+                    // Process SubCategories
+                    List<SubCategory> subCategories = new ArrayList<>();
+                    for (String subCategoryName : lineData[14].split(";")) {
+                        SubCategory subCategory = subCategoryRepository.findByName(subCategoryName.trim()).orElse(null);
+//                        if (subCategory == null) {
+//                            subCategory = new SubCategory();
+//                            subCategory.setName(subCategoryName.trim());
+//                            subCategory = subCategoryRepository.save(subCategory);
+//                        }
+                        subCategories.add(subCategory);
+                    }
+                    product.setSubCategories(subCategories);
+
+                    // Save product
+                    productRepository.save(product);
+                    successCount++;
+                } catch (Exception e) {
+                    errorCount++;
+                    errorMessages.add("Error processing product: " + lineData[0] + " - " + e.getMessage());
+                    failedProducts.add(product); // Add the product that failed to save
+                }
+            }
+        } catch (IOException e) {
+            errorMessages.add("Error reading CSV file: " + e.getMessage());
+        }
+
+        // Return the results
+        Map<String, Object> result = new HashMap<>();
+        result.put("failedProducts", failedProducts);
+        result.put("successCount", successCount);
+        result.put("errorCount", errorCount);
+        result.put("errorMessages", errorMessages);
+        return result;
+    }
+
+
+
+    private Map<String, Object> createSuccessResponse(int successCount, int errorCount, List<Product> failedProducts) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("successCount", successCount);
+        response.put("errorCount", errorCount);
+        response.put("failedProducts", failedProducts); // Add failed products to response
+        return response;
+    }
+
+    private Map<String, Object> createErrorResponse(int successCount, int errorCount, List<String> errorMessages, List<Product> failedProducts) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("successCount", successCount);
+        response.put("errorCount", errorCount);
+        response.put("errorMessages", errorMessages);
+        response.put("failedProducts", failedProducts); // Add failed products to response
+        return response;
     }
 }
 

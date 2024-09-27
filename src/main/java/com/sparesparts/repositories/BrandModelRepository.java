@@ -28,4 +28,6 @@ public interface BrandModelRepository extends JpaRepository<BrandModel, Long> {
      * @return A list of brand models associated with the given brand.
      */
     List<BrandModel> findByBrandId(Long brandId);
+
+    BrandModel findByName(String trim);
 }

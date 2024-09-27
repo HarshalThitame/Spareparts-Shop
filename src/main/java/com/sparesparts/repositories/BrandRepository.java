@@ -20,4 +20,6 @@ public interface BrandRepository extends JpaRepository<Brand, Long> {
      * @return A list of brands whose name contains the given string.
      */
     List<Brand> findByNameContainingIgnoreCase(String name);
+
+    Brand findByName(String trim);
 }

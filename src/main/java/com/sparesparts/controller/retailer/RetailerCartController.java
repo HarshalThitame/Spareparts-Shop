@@ -50,19 +50,17 @@ public class RetailerCartController {
 
     /**
      * Removes a specific product from the user's cart.
-     * This method locates the cart for the user and removes the product with the given product ID.
-     * After removal, the cart's total amount is recalculated.
      *
      * @param userId    The ID of the user whose cart is being updated.
      * @param productId The ID of the product to be removed from the cart.
-     * @return The updated Cart object after the product is removed.
+     * @return The updated cart after removing the product.
      */
-    @DeleteMapping("/remove")
+    @DeleteMapping("/remove/{userId}/{productId}")
     public ResponseEntity<Cart> removeFromCart(
-            @RequestParam Long userId,
-            @RequestParam Long productId) {
+            @PathVariable Long userId,
+            @PathVariable Long productId) {
 
-        // Remove the product from the user's cart using the cartService
+        // Call the cart service to remove the product from the user's cart
         Cart updatedCart = cartService.removeFromCart(userId, productId);
 
         // Return the updated cart wrapped in a ResponseEntity

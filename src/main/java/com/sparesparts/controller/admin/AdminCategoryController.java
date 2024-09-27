@@ -1,7 +1,10 @@
 package com.sparesparts.controller.admin;
 
 import com.sparesparts.entity.Category;
+import com.sparesparts.entity.Product;
+import com.sparesparts.entity.SubCategory;
 import com.sparesparts.service.CategoryService;
+import com.sparesparts.service.ProductService;
 import com.sparesparts.service.SubCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +23,8 @@ public class AdminCategoryController {
     private CategoryService categoryService;
     @Autowired
     private SubCategoryService subCategoryService;
+    @Autowired
+    private ProductService productService;
 
     /**
      * Get all categories
@@ -108,5 +113,26 @@ public class AdminCategoryController {
         boolean deleted = subCategoryService.deleteSubCategoryById(id); // Delete the subcategory
         // If deletion was successful, return HTTP 204 (No Content), otherwise return 404
         return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
+
+
+    @GetMapping("/product/{id}")
+    public ResponseEntity<List<Category>> getAllProductCategories(@PathVariable Long id) {
+        Optional<Product> product = productService.getProductById(id);
+        if (product.isPresent()) {
+            List<Category> categories = product.get().getCategories();
+            return ResponseEntity.ok(categories);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/sub/product/{id}")
+    public ResponseEntity<List<SubCategory>> getAllProductSubCategories(@PathVariable Long id) {
+        Optional<Product> product = productService.getProductById(id);
+        if (product.isPresent()) {
+            List<SubCategory> subCategories = product.get().getSubCategories();
+            return ResponseEntity.ok(subCategories);
+        }
+        return ResponseEntity.notFound().build();
     }
 }

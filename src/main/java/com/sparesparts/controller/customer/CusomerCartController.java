@@ -52,10 +52,10 @@ public class CusomerCartController {
      * @param productId The ID of the product to be removed from the cart.
      * @return The updated cart after removing the product.
      */
-    @DeleteMapping("/remove")
+    @DeleteMapping("/remove/{userId}/{productId}")
     public ResponseEntity<Cart> removeFromCart(
-            @RequestParam Long userId,
-            @RequestParam Long productId) {
+            @PathVariable Long userId,
+            @PathVariable Long productId) {
 
         // Call the cart service to remove the product from the user's cart
         Cart updatedCart = cartService.removeFromCart(userId, productId);

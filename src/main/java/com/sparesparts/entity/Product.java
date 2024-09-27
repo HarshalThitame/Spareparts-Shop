@@ -1,5 +1,6 @@
 package com.sparesparts.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -31,6 +32,14 @@ public class Product {
     private double discountToRetailer = 0;
     private int stockQuantity;
     private String mainImage;
+    private double weight;
+    private String dimensions;  // Dimensions of the part
+    private String material;    // Material of the product
+    private boolean isPublishedForCustomer = false;
+    private boolean isPublishedForRetailer = false;
+    private boolean isPublishedForMechanic = false;
+    private boolean isBlocked = false;
+    private double gst = 0.0;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private Set<Image> images;
@@ -69,10 +78,13 @@ public class Product {
     )
     private List<SubCategory> subCategories;
 
-    private double weight;
-    private String dimensions;  // Dimensions of the part
-    private String material;    // Material of the product
-    private boolean isPublished = false;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<OrderItem> orderItems; // List of order items for this product
+
+    @ManyToMany(mappedBy = "products")
+    @JsonIgnore
+    private List<Offer> offers;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -81,4 +93,23 @@ public class Product {
 
     @OneToMany(mappedBy = "product")
     private List<Review> reviews;
+
+    public Product(String name, String description, double price, String partNumber, int moq,
+                   int stockQuantity, double weight, String dimensions, String material,
+                   String mainImage, boolean isPublishedForCustomer) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.partNumber = partNumber;
+        this.moq = moq;
+        this.stockQuantity = stockQuantity;
+        this.weight = weight;
+        this.dimensions = dimensions;
+        this.material = material;
+        this.mainImage = mainImage;
+        this.isPublishedForCustomer = isPublishedForCustomer;
+    }
+    public Product() {
+
+    }
 }
