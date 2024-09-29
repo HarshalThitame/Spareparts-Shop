@@ -35,7 +35,7 @@ public class Order {
 
     private double discountAmount; // Total discount applied to the order
 
-    private double shippingCost; // Cost of shipping
+    private double shippingCost = 0; // Cost of shipping
 
     @CreationTimestamp
     private LocalDateTime createdAt; // Timestamp for when the order was created

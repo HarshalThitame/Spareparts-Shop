@@ -79,4 +79,6 @@ public interface OrderService {
     void cancelOrder(Long id);
 
     Order markedAsViewed(Long id);
+
+    Order markedAsUnViewed(Long id);
 }

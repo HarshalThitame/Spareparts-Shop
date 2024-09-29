@@ -73,11 +73,15 @@ public class AdminOrderController {
     }
 
     @GetMapping("/marked-as-viewed/{id}")
-    public ResponseEntity<Order> markedAsViewd(@PathVariable Long id){
+    public ResponseEntity<Order> markedAsViewed(@PathVariable Long id){
         Order order = orderService.markedAsViewed(id);
-
         return ResponseEntity.ok(order);
+    }
 
+    @GetMapping("/marked-as-un-viewed/{id}")
+    public ResponseEntity<Order> markedAsUnViewed(@PathVariable Long id){
+        Order order = orderService.markedAsUnViewed(id);
+        return ResponseEntity.ok(order);
     }
 
     @PutMapping("/update-order")

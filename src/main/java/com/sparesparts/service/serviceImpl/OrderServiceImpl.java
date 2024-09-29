@@ -275,6 +275,15 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.save(order);
     }
 
+    @Override
+    public Order markedAsUnViewed(Long id) {
+        Order order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found with ID: " + id));
+        if (order == null) {
+            return new Order();
+        }
+        order.setIsViewed(false);
+        return orderRepository.save(order);    }
+
 
     public double calculateDiscount(double price, double discount, int quantity) {
         return ((price * discount) / 100) * quantity;
