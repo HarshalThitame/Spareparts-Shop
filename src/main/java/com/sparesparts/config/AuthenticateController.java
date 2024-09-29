@@ -156,7 +156,6 @@ public class AuthenticateController {
             Map<String, Object> map = new HashMap<>();
             map.put("message", "Bad credentials");
             map.put("status", false);
-
             return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
 
         }
@@ -168,6 +167,9 @@ public class AuthenticateController {
         String role = userDetails.getAuthorities().iterator().next().getAuthority();
 
         JwtResponse jwtResponse = new JwtResponse(token, userDetails.getUsername(), role);
+        if(!user.isActive()){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         return new ResponseEntity<>(jwtResponse, HttpStatus.OK);
     }
 

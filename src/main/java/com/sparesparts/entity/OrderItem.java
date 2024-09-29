@@ -37,6 +37,13 @@ public class OrderItem {
 
     private double taxAmount = 0.0; // Tax applied to this item
 
+    // New field to capture the GST of the product at the time of the order
+    private double gst;
+    private double discountOnPurchase;
+    private double discountToMechanics;
+    private double discountToRetailer;
+
+
     @CreationTimestamp
     private LocalDateTime createdAt; // Automatically generated creation timestamp
 
