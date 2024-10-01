@@ -26,9 +26,9 @@ public class Order {
 
     private double totalAmount; // Total amount for the order
 
-//    @OneToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "shipping_address_id", nullable = false)
-//    private ShippingAddress shippingAddress; // Shipping address for the order
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "shipping_address_id", nullable = false)
+    private ShippingAddress shippingAddress; // Shipping address for the order
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems; // List of order items

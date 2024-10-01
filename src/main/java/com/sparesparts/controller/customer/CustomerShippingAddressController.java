@@ -45,17 +45,7 @@ public class CustomerShippingAddressController {
         return ResponseEntity.ok(shippingAddress);
     }
 
-    /**
-     * Get all shipping addresses for a specific user.
-     *
-     * @param userId The ID of the user whose addresses are to be retrieved.
-     * @return List of shipping addresses for the user.
-     */
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<ShippingAddress>> getShippingAddressesByUserId(@PathVariable Long userId) {
-        List<ShippingAddress> shippingAddresses = shippingAddressService.getShippingAddressesByUserId(userId);
-        return ResponseEntity.ok(shippingAddresses);
-    }
+
 
     /**
      * Add a new shipping address for the authenticated customer.

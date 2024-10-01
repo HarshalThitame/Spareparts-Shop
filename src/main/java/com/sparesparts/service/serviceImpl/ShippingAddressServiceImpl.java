@@ -29,7 +29,13 @@ public class ShippingAddressServiceImpl implements ShippingAddressService {
      */
     @Override
     public ShippingAddress createShippingAddress(ShippingAddress shippingAddress) {
+        if (shippingAddressRepository.existsById(shippingAddress.getId())) {
         return shippingAddressRepository.save(shippingAddress);
+
+        }else {
+            shippingAddress.setId(System.currentTimeMillis()-10000000);
+            return shippingAddressRepository.save(shippingAddress);
+        }
     }
 
     /**
@@ -69,15 +75,6 @@ public class ShippingAddressServiceImpl implements ShippingAddressService {
         shippingAddressRepository.deleteById(id);
     }
 
-    /**
-     * Get a shipping address by user ID.
-     * @param userId The ID of the user whose shipping address to retrieve.
-     * @return The shipping address associated with the specified user.
-     */
-    @Override
-    public List<ShippingAddress> getShippingAddressByUserId(Long userId) {
-        return shippingAddressRepository.findByUserId(userId);
-    }
 
     @Override
     public List<ShippingAddress> getAllShippingAddresses() {
@@ -86,12 +83,14 @@ public class ShippingAddressServiceImpl implements ShippingAddressService {
 
     @Override
     public ShippingAddress addShippingAddress(ShippingAddress shippingAddress) {
-        // Save a new shipping address to the database
-        return shippingAddressRepository.save(shippingAddress);
+        if (shippingAddressRepository.existsById(shippingAddress.getId())) {
+            return shippingAddressRepository.save(shippingAddress);
+
+        }else {
+            shippingAddress.setId(System.currentTimeMillis()-10000000);
+            return shippingAddressRepository.save(shippingAddress);
+        }
     }
 
-    @Override
-    public List<ShippingAddress> getShippingAddressesByUserId(Long userId) {
-        return shippingAddressRepository.findByUserId(userId);
-    }
+
 }

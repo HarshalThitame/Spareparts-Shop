@@ -41,7 +41,7 @@ public class Product {
     private double gst = 0.0;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private Set<Image> images;
+    private List<Images> images;
 
     // Many-to-Many relationship with Brand
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})

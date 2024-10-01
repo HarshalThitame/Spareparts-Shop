@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -83,4 +84,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "JOIN p.categories c " +
             "WHERE c.id = :categoryId")
     List<Product> findByCategoryId(@Param("categoryId") Long categoryId);
+
+    List<Product> findByStockQuantityLessThan(int i);
+
+    @Query("SELECT p FROM Product p LEFT JOIN p.orderItems oi WHERE oi IS NULL")
+    List<Product> findDeadProducts();
+
+    List<Product> findByUpdatedAtAfter(LocalDateTime localDateTime);
 }

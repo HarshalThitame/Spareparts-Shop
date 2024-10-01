@@ -49,6 +49,14 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public Order createOrder(Order order) {
+        // Check if the shipping address needs to be saved
+        ShippingAddress shippingAddress = order.getShippingAddress();
+        if (shippingAddress != null) {
+            // Save the shipping address
+            shippingAddress.setId(System.currentTimeMillis()-1000000);
+            shippingAddress = shippingAddressRepository.save(shippingAddress);
+            order.setShippingAddress(shippingAddress); // Set the saved shipping address back to the order
+        }
 
         // Set the saved items to the order
         List<OrderItem> orderItems = order.getOrderItems();
@@ -289,8 +297,10 @@ public class OrderServiceImpl implements OrderService {
         return ((price * discount) / 100) * quantity;
     }
 
-    public double calculateDiscounteAmount(double mrp, double discount, int quantity) {
-        return mrp - calculateDiscount(mrp, discount, quantity);
+    @Override
+    public List<Order> getOrderUpdates() {
+        LocalDateTime recentThreshold = LocalDateTime.now().minusDays(7); // Change to desired timeframe
+        return orderRepository.findUpdatedRecently(recentThreshold); // Assuming you have this method in your repository
     }
 
 }

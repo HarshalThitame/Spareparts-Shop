@@ -1,6 +1,7 @@
 package com.sparesparts.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -11,7 +12,8 @@ import java.sql.Timestamp;
 @Entity
 @Data
 @Table(name = "images")
-public class Image {
+@JsonIgnoreProperties({"product"}) // Ignore product to avoid circular reference issues during serialization
+public class Images {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,7 +23,6 @@ public class Image {
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
-    @JsonIgnore
     private Product product;
 
 

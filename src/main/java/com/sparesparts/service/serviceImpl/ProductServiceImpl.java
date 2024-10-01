@@ -1,6 +1,5 @@
 package com.sparesparts.service.serviceImpl;
 
-import com.opencsv.CSVReader;
 import com.sparesparts.entity.*;
 import com.sparesparts.repositories.*;
 import com.sparesparts.service.ProductService;
@@ -12,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Reader;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,6 +27,7 @@ public class ProductServiceImpl implements ProductService {
     private final SubCategoryRepository subCategoryRepository;
     private final BrandRepository brandRepository;
     private final BrandModelRepository brandModelRepository;
+    private final ImagesRepository imagesRepository;
 
     /**
      * Constructor-based dependency injection for repositories.
@@ -36,12 +36,13 @@ public class ProductServiceImpl implements ProductService {
      * @param categoryRepository Repository for category data access.
      */
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository, SubCategoryRepository subCategoryRepository, BrandRepository brandRepository, BrandModelRepository brandModelRepository) {
+    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository, SubCategoryRepository subCategoryRepository, BrandRepository brandRepository, BrandModelRepository brandModelRepository, ImagesRepository imagesRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.subCategoryRepository = subCategoryRepository;
         this.brandRepository = brandRepository;
         this.brandModelRepository = brandModelRepository;
+        this.imagesRepository = imagesRepository;
     }
 
     /**
@@ -62,7 +63,10 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public Optional<Product> getProductById(Long id) {
-        return productRepository.findById(id);
+        Optional<Product> product = productRepository.findById(id);
+        List<Images> images = imagesRepository.findByProductId(product.get().getId());
+        product.get().setImages(images);
+        return product;
     }
 
     /**
@@ -77,6 +81,10 @@ public class ProductServiceImpl implements ProductService {
 
         Optional<Product> productById = productRepository.findById(product.getId());
         productById.ifPresent(value -> product.setCreatedAt(value.getCreatedAt()));
+
+        if (productById.isEmpty()){
+            product.setCreatedAt(LocalDateTime.now());
+        }
 
         // Fetch and manage categories
         List<Category> existingCategories = categoryRepository.findAllById(
@@ -99,6 +107,7 @@ public class ProductServiceImpl implements ProductService {
         List<SubCategory> existingSubCategories = subCategoryRepository.findAllById(
                 product.getSubCategories().stream().map(SubCategory::getId).collect(Collectors.toList()));
         product.setSubCategories(existingSubCategories);
+
 
 
         // Save the product with all managed entities
@@ -305,6 +314,24 @@ public class ProductServiceImpl implements ProductService {
         response.put("errorMessages", errorMessages);
         response.put("failedProducts", failedProducts); // Add failed products to response
         return response;
+    }
+
+    @Override
+    public List<Product> getLowStockProducts() {
+        List<Product> products = productRepository.findByStockQuantityLessThan(10);// Replace 10 with your threshold
+//        products.sort(Comparator.comparingInt(Product::getStockQuantity));
+
+        return products;
+    }
+
+    @Override
+    public List<Product> getDeadProducts() {
+        return productRepository.findDeadProducts(); // Assuming you have this method in your repository
+    }
+
+    @Override
+    public List<Product> getRecentlyUpdatedProducts(int i) {
+        return productRepository.findByUpdatedAtAfter(LocalDateTime.now().minusDays(30)); // Replace 30 with your desired timeframe
     }
 }
 

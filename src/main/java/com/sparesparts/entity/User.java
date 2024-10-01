@@ -1,6 +1,7 @@
 package com.sparesparts.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sparesparts.entity.Enum.Role;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -53,6 +54,9 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Review> reviews;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<SavedAddress> savedAddresses;
 
 
     // Getters and setters

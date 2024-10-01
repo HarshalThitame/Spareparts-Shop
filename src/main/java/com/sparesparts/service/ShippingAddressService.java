@@ -36,13 +36,6 @@ public interface ShippingAddressService {
      */
     void deleteShippingAddress(Long id);
 
-    /**
-     * Get a shipping address by user ID.
-     * @param userId The ID of the user whose shipping address to retrieve.
-     * @return The shipping address associated with the specified user.
-     */
-    List<ShippingAddress> getShippingAddressByUserId(Long userId);
-
 
     /**
      * Get all shipping addresses for the authenticated customer.
@@ -59,5 +52,4 @@ public interface ShippingAddressService {
     ShippingAddress addShippingAddress(ShippingAddress shippingAddress);
 
 
-    List<ShippingAddress> getShippingAddressesByUserId(Long userId);
 }

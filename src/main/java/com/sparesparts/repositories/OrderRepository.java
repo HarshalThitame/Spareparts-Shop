@@ -2,8 +2,11 @@ package com.sparesparts.repositories;
 
 import com.sparesparts.entity.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -25,4 +28,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
      * @return List of orders with the specified status.
      */
     List<Order> findByStatus(String status);
-}
+
+    @Query("SELECT o FROM Order o WHERE o.updatedAt >= :timestamp")
+    List<Order> findUpdatedRecently(@Param("timestamp") LocalDateTime timestamp);}

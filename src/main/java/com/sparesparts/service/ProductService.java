@@ -120,5 +120,9 @@ public interface ProductService {
 
     public Map<String, Object> saveProductsFromCSV(MultipartFile file);
 
+    List<Product> getLowStockProducts(); // Method to retrieve low stock products
+    List<Product> getDeadProducts(); // Method to retrieve dead products
+    List<Product> getRecentlyUpdatedProducts(int i); // Method to retrieve recently updated products
+
 }
 

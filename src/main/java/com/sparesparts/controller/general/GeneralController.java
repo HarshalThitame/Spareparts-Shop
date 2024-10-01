@@ -1,4 +1,4 @@
-package com.sparesparts.controller;
+package com.sparesparts.controller.general;
 
 import com.sparesparts.entity.*;
 import com.sparesparts.service.*;

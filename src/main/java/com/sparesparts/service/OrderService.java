@@ -81,4 +81,7 @@ public interface OrderService {
     Order markedAsViewed(Long id);
 
     Order markedAsUnViewed(Long id);
+
+    List<Order> getOrderUpdates(); // Method to retrieve order updates
+
 }
