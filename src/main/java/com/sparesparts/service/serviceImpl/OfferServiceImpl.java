@@ -54,4 +54,20 @@ public class OfferServiceImpl implements OfferService {
         // Save the updated offer to persist the changes
         offerRepository.save(offer);
     }
+
+    @Override
+    public Offer getOfferById(Long offerId) {
+        return offerRepository.findById(offerId).orElseThrow(() -> new RuntimeException("Offer not found"));
+    }
+
+    @Override
+    public void deleteOffer(Long offerId) {
+        offerRepository.deleteById(offerId);
+    }
+
+    @Override
+    public List<Product> getProductsByOfferId(Long id) {
+
+        return offerRepository.findProductsByOfferId(id);
+    }
 }

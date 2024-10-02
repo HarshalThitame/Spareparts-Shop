@@ -3,8 +3,10 @@ package com.sparesparts.controller.admin;
 import com.sparesparts.entity.Offer;
 import com.sparesparts.service.OfferService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -46,5 +48,25 @@ public class AdminOfferController {
     @PostMapping("/{offerId}/products/{productId}")
     public void applyOfferToProduct(@PathVariable Long offerId, @PathVariable Long productId) {
         offerService.applyOfferToProduct(offerId, productId);
+    }
+
+    @PutMapping("/add-image")
+    public ResponseEntity<Offer> addImageToOffer(@RequestBody Offer offer) {
+        Offer existingOffer = offerService.getOfferById(offer.getId());
+        if (existingOffer != null) {
+            existingOffer.setImageUrl(offer.getImageUrl());
+            return ResponseEntity.ok().body(offerService.addOffer(offer));
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteOffer(@PathVariable Long id) {
+        Offer existingOffer = offerService.getOfferById(id);
+        if (existingOffer != null) {
+            offerService.deleteOffer(id);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.noContent().build();
     }
 }

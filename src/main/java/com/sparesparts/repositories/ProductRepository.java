@@ -91,4 +91,22 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findDeadProducts();
 
     List<Product> findByUpdatedAtAfter(LocalDateTime localDateTime);
+
+    @Query("SELECT p FROM Product p " +
+            "LEFT JOIN p.categories c " +
+            "LEFT JOIN p.subCategories sc " +
+            "LEFT JOIN p.brands b " +
+            "LEFT JOIN p.brandModels bm " +
+            "WHERE lower(p.name) LIKE lower(concat('%', :keyword, '%')) " +
+            "OR lower(p.description) LIKE lower(concat('%', :keyword, '%')) " +
+            "OR lower(p.partNumber) LIKE lower(concat('%', :keyword, '%')) " +
+            "OR lower(p.material) LIKE lower(concat('%', :keyword, '%')) " +
+            "OR lower(p.mainImage) LIKE lower(concat('%', :keyword, '%')) " +
+            "OR lower(p.binLocation) LIKE lower(concat('%', :keyword, '%')) " +
+            "OR lower(c.name) LIKE lower(concat('%', :keyword, '%')) " +
+            "OR lower(sc.name) LIKE lower(concat('%', :keyword, '%')) " +
+            "OR lower(b.name) LIKE lower(concat('%', :keyword, '%')) " +
+            "OR lower(bm.name) LIKE lower(concat('%', :keyword, '%'))")
+    List<Product> searchByKeyword(String keyword);
+
 }

@@ -135,4 +135,16 @@ public class AdminCategoryController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @PutMapping("/upload-image")
+    public ResponseEntity<Category> uploadCategoryImage(@RequestBody Category category)
+    {
+        Optional<Category> existingCategory = categoryService.getCategoryById(category.getId());
+        if (existingCategory.isPresent()) {
+            existingCategory.get().setCategoryImage(category.getCategoryImage());
+            Category savedCategory = categoryService.saveCategory(existingCategory.get());
+            return ResponseEntity.ok(savedCategory);
+        }
+        return ResponseEntity.notFound().build();
+    }
 }

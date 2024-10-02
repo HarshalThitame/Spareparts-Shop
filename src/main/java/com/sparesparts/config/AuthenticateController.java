@@ -64,6 +64,9 @@ public class AuthenticateController {
             }
             String username = (user.getFirstName() + "." + user.getLastName() + "." + user.getEmail()).toLowerCase();
             user.setUsername(username);
+            if(user.getUserRole() == Role.CUSTOMER) {
+                user.setActive(true);
+            }
             User save = userService.createUser(user);
             return new ResponseEntity<>(save, HttpStatus.CREATED);
         }

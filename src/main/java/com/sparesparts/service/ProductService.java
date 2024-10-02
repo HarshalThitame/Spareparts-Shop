@@ -124,5 +124,6 @@ public interface ProductService {
     List<Product> getDeadProducts(); // Method to retrieve dead products
     List<Product> getRecentlyUpdatedProducts(int i); // Method to retrieve recently updated products
 
+    List<Product> searchProductsByKeywords(String keyword);
 }
 

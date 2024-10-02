@@ -18,6 +18,7 @@ public class Offer {
 
     private String title;
     private String description;
+    private String imageUrl;
 
     private double discount;  // Discount percentage
 

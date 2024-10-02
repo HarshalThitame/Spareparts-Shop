@@ -1,6 +1,7 @@
 package com.sparesparts.service;
 
 import com.sparesparts.entity.Offer;
+import com.sparesparts.entity.Product;
 
 import java.util.List;
 
@@ -25,4 +26,10 @@ public interface OfferService {
      * @param productId The ID of the product to which the offer will be applied.
      */
     void applyOfferToProduct(Long offerId, Long productId);
+
+    Offer getOfferById(Long offerId);
+
+    void deleteOffer(Long offerId);
+
+    List<Product> getProductsByOfferId(Long id);
 }

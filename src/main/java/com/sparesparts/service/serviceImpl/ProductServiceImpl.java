@@ -333,5 +333,10 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> getRecentlyUpdatedProducts(int i) {
         return productRepository.findByUpdatedAtAfter(LocalDateTime.now().minusDays(30)); // Replace 30 with your desired timeframe
     }
+
+    @Override
+    public List<Product> searchProductsByKeywords(String keyword) {
+        return productRepository.searchByKeyword(keyword);
+    }
 }
 
