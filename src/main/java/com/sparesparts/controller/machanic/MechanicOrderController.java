@@ -1,5 +1,7 @@
 package com.sparesparts.controller.machanic;
 
+import com.sparesparts.config.mail.EmailData;
+import com.sparesparts.config.mail.EmailService;
 import com.sparesparts.entity.Order;
 import com.sparesparts.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,8 @@ import java.util.List;
 @RequestMapping("/api/mechanic/orders")
 public class MechanicOrderController {
 
+    @Autowired
+    private EmailService emailService;
     private final OrderService orderService;
 
     @Autowired
@@ -50,6 +54,12 @@ public class MechanicOrderController {
     public ResponseEntity<Order> createOrder(@RequestBody Order order) {
         Order createdOrder = orderService.createOrder(order);
         return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/send-order-mail")
+    public ResponseEntity<?> sendOrderPlaceMail(@RequestBody EmailData emailData){
+        emailService.sendDataToUser(emailData.getTo(),emailData.getSubject(),emailData.getBody());
+        return ResponseEntity.ok().build();
     }
 
     // Update an existing order

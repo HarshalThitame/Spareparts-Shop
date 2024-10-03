@@ -1,6 +1,8 @@
 package com.sparesparts.controller.customer;
 
 
+import com.sparesparts.config.mail.EmailData;
+import com.sparesparts.config.mail.EmailService;
 import com.sparesparts.entity.Order;
 import com.sparesparts.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/customer/orders")
 public class CustomerOrderController {
+
+    @Autowired
+    private EmailService emailService;
 
     private final OrderService orderService;
 
@@ -63,7 +68,14 @@ public class CustomerOrderController {
     @PostMapping
     public ResponseEntity<Order> placeOrder(@RequestBody Order order) {
         Order placedOrder = orderService.createOrder(order); // Implement method to place a new order
+
         return ResponseEntity.ok(placedOrder);
+    }
+
+    @PostMapping("/send-order-mail")
+    public ResponseEntity<?> sendOrderPlaceMail(@RequestBody EmailData emailData){
+        emailService.sendDataToUser(emailData.getTo(),emailData.getSubject(),emailData.getBody());
+        return ResponseEntity.ok().build();
     }
 
     /**

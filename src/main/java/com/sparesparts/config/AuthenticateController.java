@@ -106,10 +106,10 @@ public class AuthenticateController {
     public ResponseEntity<User> updateUser(@RequestBody User user) {
 
 
-        User newUser = userService.getUserById(user.getId());
-        user.setPassword(newUser.getPassword());
+        User existingUser = userService.getUserById(user.getId());
+        user.setPassword(existingUser.getPassword());
 
-        return updateUserDetails(user, newUser);
+        return updateUserDetails(user, existingUser);
     }
 
     @PutMapping("/update-password")

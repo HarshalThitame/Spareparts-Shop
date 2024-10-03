@@ -1,6 +1,8 @@
 package com.sparesparts.controller.admin;
 
 
+import com.sparesparts.config.mail.EmailData;
+import com.sparesparts.config.mail.EmailService;
 import com.sparesparts.entity.Order;
 import com.sparesparts.entity.Product;
 import com.sparesparts.service.OrderService;
@@ -16,6 +18,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin/orders")
 public class AdminOrderController {
+
+    @Autowired
+    public EmailService emailService;
 
     private final OrderService orderService;
 
@@ -56,6 +61,12 @@ public class AdminOrderController {
         order.setId(id); // Ensure the ID in the order matches the path variable
         Order updatedOrder = orderService.updateOrder(order);
         return ResponseEntity.ok(updatedOrder);
+    }
+
+    @PostMapping("/send-order-mail")
+    public ResponseEntity<?> sendOrderPlaceMail(@RequestBody EmailData emailData){
+        emailService.sendDataToUser(emailData.getTo(),emailData.getSubject(),emailData.getBody());
+        return ResponseEntity.ok().build();
     }
 
     /**
