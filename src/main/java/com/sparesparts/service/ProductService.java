@@ -1,6 +1,7 @@
 package com.sparesparts.service;
 
 import com.sparesparts.entity.Product;
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -125,5 +126,9 @@ public interface ProductService {
     List<Product> getRecentlyUpdatedProducts(int i); // Method to retrieve recently updated products
 
     List<Product> searchProductsByKeywords(String keyword);
+
+    public List<Product> getTopSellingProducts(int limit);
+    public List<Product> getTop18Products();
+    public Page<Product> getPaginatedProducts(int page, int size);
 }
 

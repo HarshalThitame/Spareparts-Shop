@@ -5,6 +5,9 @@ import com.sparesparts.repositories.*;
 import com.sparesparts.service.ProductService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,6 +31,7 @@ public class ProductServiceImpl implements ProductService {
     private final BrandRepository brandRepository;
     private final BrandModelRepository brandModelRepository;
     private final ImagesRepository imagesRepository;
+    private final OrderItemRepository orderItemRepository;
 
     /**
      * Constructor-based dependency injection for repositories.
@@ -36,13 +40,14 @@ public class ProductServiceImpl implements ProductService {
      * @param categoryRepository Repository for category data access.
      */
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository, SubCategoryRepository subCategoryRepository, BrandRepository brandRepository, BrandModelRepository brandModelRepository, ImagesRepository imagesRepository) {
+    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository, SubCategoryRepository subCategoryRepository, BrandRepository brandRepository, BrandModelRepository brandModelRepository, ImagesRepository imagesRepository, OrderItemRepository orderItemRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.subCategoryRepository = subCategoryRepository;
         this.brandRepository = brandRepository;
         this.brandModelRepository = brandModelRepository;
         this.imagesRepository = imagesRepository;
+        this.orderItemRepository = orderItemRepository;
     }
 
     /**
@@ -337,6 +342,31 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> searchProductsByKeywords(String keyword) {
         return productRepository.searchByKeyword(keyword);
+    }
+
+    @Override
+    public List<Product> getTopSellingProducts(int limit) {
+        List<Object[]> results = orderItemRepository.findTopSellingProducts();
+        List<Product> topSellingProducts = new ArrayList<>();
+
+        for (int i = 0; i < Math.min(limit, results.size()); i++) {
+            Object[] result = results.get(i);
+            Product product = (Product) result[0];
+            topSellingProducts.add(product);
+        }
+
+        return topSellingProducts;
+    }
+
+    @Override
+    public List<Product> getTop18Products() {
+        return productRepository.findTop18ByOrderByIdAsc();
+    }
+
+    @Override
+    public Page<Product> getPaginatedProducts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return productRepository.findAll(pageable);
     }
 }
 

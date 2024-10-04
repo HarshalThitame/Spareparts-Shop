@@ -101,5 +101,13 @@ public class AdminOrderController {
         return ResponseEntity.ok(placedOrder);
     }
 
+    @GetMapping("/new-orders")
+    public List<Order> getUnseenOrders() {
+        return orderService.getUnseenOrders();
+    }
+    @GetMapping("/new-order-count")
+    public long getUnseenOrderCount() {
+        return orderService.getUnseenOrderCount();
+    }
 
 }

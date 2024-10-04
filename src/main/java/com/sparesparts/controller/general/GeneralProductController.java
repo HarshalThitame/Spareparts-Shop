@@ -30,4 +30,13 @@ public class GeneralProductController {
         return ResponseEntity.ok(products);
     }
 
+    @GetMapping("/top-selling-products")
+    public List<Product> getTopSellingProducts(@RequestParam(defaultValue = "12") int limit) {
+        return productService.getTopSellingProducts(limit);
+    }
+
+    @GetMapping("/top18")
+    public List<Product> getTop18Products() {
+        return productService.getTop18Products();
+    }
 }

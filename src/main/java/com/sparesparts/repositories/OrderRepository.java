@@ -1,6 +1,7 @@
 package com.sparesparts.repositories;
 
 import com.sparesparts.entity.Order;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,6 +18,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     /**
      * Find all orders by user ID.
+     *
      * @param userId The ID of the user.
      * @return List of orders associated with the user.
      */
@@ -24,10 +26,18 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     /**
      * Find orders by their status.
+     *
      * @param status The status of the orders to find.
      * @return List of orders with the specified status.
      */
     List<Order> findByStatus(String status);
 
     @Query("SELECT o FROM Order o WHERE o.updatedAt >= :timestamp")
-    List<Order> findUpdatedRecently(@Param("timestamp") LocalDateTime timestamp);}
+    List<Order> findUpdatedRecently(@Param("timestamp") LocalDateTime timestamp);
+
+    List<Order> findByIsViewedFalse(Sort sort);
+    long countByIsViewedFalse();
+
+}
+
+

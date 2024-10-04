@@ -14,6 +14,7 @@ import com.sparesparts.repositories.ShippingAddressRepository;
 import com.sparesparts.service.OrderService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -303,4 +304,13 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findUpdatedRecently(recentThreshold); // Assuming you have this method in your repository
     }
 
+    @Override
+    public List<Order> getUnseenOrders() {
+        return orderRepository.findByIsViewedFalse(Sort.by(Sort.Direction.DESC, "createdAt"));
+    }
+
+    @Override
+    public long getUnseenOrderCount() {
+        return orderRepository.countByIsViewedFalse();
+    }
 }

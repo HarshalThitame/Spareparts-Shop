@@ -84,4 +84,8 @@ public interface OrderService {
 
     List<Order> getOrderUpdates(); // Method to retrieve order updates
 
+    public List<Order> getUnseenOrders();
+
+    public long getUnseenOrderCount();
+
 }

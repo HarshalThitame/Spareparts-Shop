@@ -2,6 +2,8 @@ package com.sparesparts.repositories;
 
 import com.sparesparts.entity.Category;
 import com.sparesparts.entity.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -108,5 +110,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "OR lower(b.name) LIKE lower(concat('%', :keyword, '%')) " +
             "OR lower(bm.name) LIKE lower(concat('%', :keyword, '%'))")
     List<Product> searchByKeyword(String keyword);
+
+    List<Product> findTop18ByOrderByIdAsc(); // Method to get top 18 products ordered by ID
+
+    Page<Product> findAll(Pageable pageable);
+
 
 }
