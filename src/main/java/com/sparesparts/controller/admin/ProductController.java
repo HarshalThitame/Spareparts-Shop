@@ -181,6 +181,4 @@ public class ProductController {
         productService.deleteImageFromProduct(productId, imageId);
         return ResponseEntity.ok(HttpStatus.OK);
     }
-
-
 }
