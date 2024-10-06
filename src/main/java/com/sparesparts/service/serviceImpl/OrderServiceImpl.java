@@ -14,6 +14,9 @@ import com.sparesparts.repositories.ShippingAddressRepository;
 import com.sparesparts.service.OrderService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -312,5 +315,17 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public long getUnseenOrderCount() {
         return orderRepository.countByIsViewedFalse();
+    }
+
+    @Override
+    public Page<Order> getAllOrders(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return orderRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Order> getOrdersByStatus(String status, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return orderRepository.findByStatus(status, pageable);
     }
 }

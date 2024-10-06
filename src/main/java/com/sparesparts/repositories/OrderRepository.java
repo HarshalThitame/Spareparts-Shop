@@ -1,6 +1,8 @@
 package com.sparesparts.repositories;
 
 import com.sparesparts.entity.Order;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -37,6 +39,12 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> findByIsViewedFalse(Sort sort);
     long countByIsViewedFalse();
+
+    // This method will return paginated data
+    Page<Order> findAll(Pageable pageable);
+
+    // Example with filtering by status
+    Page<Order> findByStatus(String status, Pageable pageable);
 
 }
 

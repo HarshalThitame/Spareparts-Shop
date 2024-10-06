@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 public class PresignedUrlController {
     private final S3Service s3Service;
     private final S3PresignService s3PresignService;

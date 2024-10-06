@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -335,8 +336,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getRecentlyUpdatedProducts(int i) {
-        return productRepository.findByUpdatedAtAfter(LocalDateTime.now().minusDays(30)); // Replace 30 with your desired timeframe
+    public List<Product> getRecentlyUpdatedProducts(int days) {
+        // Define sorting by updatedAt in descending order
+        Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt");
+
+        // Fetch products updated within the last 'days' days, sorted by updatedAt
+        return productRepository.findByUpdatedAtAfter(LocalDateTime.now().minusDays(days), sort);
     }
 
     @Override
@@ -367,6 +372,27 @@ public class ProductServiceImpl implements ProductService {
     public Page<Product> getPaginatedProducts(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return productRepository.findAll(pageable);
+    }
+
+    @Transactional
+    @Override
+    public void deleteImageFromProduct(Long productId, Long imageId) {
+        // Find the product
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        // Find the image
+        Images image = imagesRepository.findById(imageId)
+                .orElseThrow(() -> new RuntimeException("Image not found"));
+
+        // Remove the image from the product's image list
+        product.getImages().remove(image);
+
+        // Optionally delete the image entity from the database
+        imagesRepository.delete(image);
+
+        // Save the updated product
+        productRepository.save(product);
     }
 }
 

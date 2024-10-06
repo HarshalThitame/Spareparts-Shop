@@ -135,18 +135,12 @@ public class ProductController {
     @PostMapping("/upload-main-image/{id}")
     public ResponseEntity<Product> uploadProductWithImage(
             @PathVariable Long id,
-            @RequestParam("file") MultipartFile image) {
+            @RequestBody String MainImageURL) {
 
 
         Product product = productService.getProductById(id).get();
         try {
-            // Upload the image to S3
-            String imageUrl = s3Service.uploadFile(image); // Your upload method
-
-            product.setMainImage(imageUrl);
-            // Here you can save the product details to your database
-            // (e.g., product.setImageUrl(imageUrl); productRepository.save(product);)
-
+           product.setMainImage(MainImageURL);
             productService.saveProduct(product);
             return ResponseEntity.ok(product);
         } catch (Exception e) {
@@ -182,7 +176,11 @@ public class ProductController {
         }
     }
 
-
+    @DeleteMapping("/{productId}/images/{imageId}")
+    public ResponseEntity<?> deleteImage(@PathVariable Long productId, @PathVariable Long imageId) {
+        productService.deleteImageFromProduct(productId, imageId);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
 
 
 }

@@ -7,6 +7,7 @@ import com.sparesparts.entity.Order;
 import com.sparesparts.entity.Product;
 import com.sparesparts.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -108,6 +109,22 @@ public class AdminOrderController {
     @GetMapping("/new-order-count")
     public long getUnseenOrderCount() {
         return orderService.getUnseenOrderCount();
+    }
+
+    @GetMapping("/by-pagination")
+    public Page<Order> getOrders(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return orderService.getAllOrders(page, size);
+    }
+
+    // Get paginated orders by status
+    @GetMapping("/status/by-pagination")
+    public Page<Order> getOrdersByStatus(
+            @RequestParam String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return orderService.getOrdersByStatus(status, page, size);
     }
 
 }

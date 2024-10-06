@@ -4,6 +4,7 @@ import com.sparesparts.entity.Category;
 import com.sparesparts.entity.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -92,7 +93,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("SELECT p FROM Product p LEFT JOIN p.orderItems oi WHERE oi IS NULL")
     List<Product> findDeadProducts();
 
-    List<Product> findByUpdatedAtAfter(LocalDateTime localDateTime);
+    List<Product> findByUpdatedAtAfter(LocalDateTime updatedAt, Sort sort);
 
     @Query("SELECT p FROM Product p " +
             "LEFT JOIN p.categories c " +

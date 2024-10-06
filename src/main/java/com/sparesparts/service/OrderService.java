@@ -2,6 +2,8 @@ package com.sparesparts.service;
 
 
 import com.sparesparts.entity.Order;
+import org.springframework.data.domain.Page;
+
 import java.util.List;
 
 /**
@@ -87,5 +89,8 @@ public interface OrderService {
     public List<Order> getUnseenOrders();
 
     public long getUnseenOrderCount();
+
+    public Page<Order> getAllOrders(int page, int size);
+    public Page<Order> getOrdersByStatus(String status, int page, int size);
 
 }
