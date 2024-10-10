@@ -12,6 +12,7 @@ import com.sparesparts.repositories.OrderRepository;
 import com.sparesparts.repositories.ProductRepository;
 import com.sparesparts.repositories.ShippingAddressRepository;
 import com.sparesparts.service.OrderService;
+import com.sparesparts.service.ProductService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,13 +36,15 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemRepository orderItemRepository;
     private final ShippingAddressRepository shippingAddressRepository;
     private final ProductRepository productRepository;
+    private final ProductService productService;
 
     @Autowired
-    public OrderServiceImpl(OrderRepository orderRepository, OrderItemRepository orderItemRepository, ShippingAddressRepository shippingAddressRepository, ProductRepository productRepository) {
+    public OrderServiceImpl(OrderRepository orderRepository, OrderItemRepository orderItemRepository, ShippingAddressRepository shippingAddressRepository, ProductRepository productRepository, ProductService productService) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.shippingAddressRepository = shippingAddressRepository;
         this.productRepository = productRepository;
+        this.productService = productService;
     }
 
     /**
@@ -72,6 +75,9 @@ public class OrderServiceImpl implements OrderService {
         double td = 0.0;
         List<OrderItem> newOrderItems = new ArrayList<>();
         for (OrderItem item : orderItems) {
+            if(item.getQuantity() > item.getProduct().getStockQuantity()){
+                throw new IllegalArgumentException("Insufficient stock for product: " + item.getProduct().getName());
+            }
             item.setId(System.currentTimeMillis());
 
             item.setSubtotal(item.getProduct().getPrice()*item.getQuantity());
@@ -104,6 +110,10 @@ public class OrderServiceImpl implements OrderService {
             item.setOrder(savedOrder);
             OrderItem savedOrderItem = orderItemRepository.save(item);
             newOrderItems.add(savedOrderItem);
+
+
+
+            productService.updateProductStock(savedOrderItem.getProduct().getId(),savedOrderItem.getQuantity());
         }
         savedOrder.setOrderItems(newOrderItems);
 
@@ -319,13 +329,21 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Page<Order> getAllOrders(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         return orderRepository.findAll(pageable);
     }
 
+
     @Override
     public Page<Order> getOrdersByStatus(String status, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size,Sort.by(Sort.Direction.DESC,"createdAt"));
         return orderRepository.findByStatus(status, pageable);
     }
+
+    @Override
+    public Page<Order> getVorOrders(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return orderRepository.findByIsVorTrue(pageable);
+    }
+
 }

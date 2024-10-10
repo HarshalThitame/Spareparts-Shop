@@ -92,5 +92,5 @@ public interface OrderService {
 
     public Page<Order> getAllOrders(int page, int size);
     public Page<Order> getOrdersByStatus(String status, int page, int size);
-
+    public Page<Order> getVorOrders(int page, int size);
 }

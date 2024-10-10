@@ -27,16 +27,36 @@ public class GeneralProductController {
     @GetMapping("/search")
     public ResponseEntity<List<Product>> searchProducts(@RequestParam String keyword) {
         List<Product> products = productService.searchProductsByKeywords(keyword);
+        List<Product> unblockedProducts = products.stream()
+                .filter(product -> !product.isBlocked()) // Assuming the Product entity has an isBlocked method
+                .toList();
+        if (unblockedProducts.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
         return ResponseEntity.ok(products);
     }
 
     @GetMapping("/top-selling-products")
-    public List<Product> getTopSellingProducts(@RequestParam(defaultValue = "12") int limit) {
-        return productService.getTopSellingProducts(limit);
+    public ResponseEntity<List<Product>> getTopSellingProducts(@RequestParam(defaultValue = "6") int limit) {
+        List<Product> products = productService.getTopSellingProducts(limit);
+        List<Product> unblockedProducts = products.stream()
+                .filter(product -> !product.isBlocked()) // Assuming the Product entity has an isBlocked method
+                .toList();
+        if (unblockedProducts.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(products);
     }
 
     @GetMapping("/top18")
-    public List<Product> getTop18Products() {
-        return productService.getTop18Products();
+    public ResponseEntity<List<Product>> getTop18Products() {
+        List<Product> products = productService.getTop18Products();
+        List<Product> unblockedProducts = products.stream()
+                .filter(product -> !product.isBlocked()) // Assuming the Product entity has an isBlocked method
+                .toList();
+        if (unblockedProducts.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(unblockedProducts);
     }
 }

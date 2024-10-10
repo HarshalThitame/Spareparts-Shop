@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * REST controller for general actions that are accessible to all users.
@@ -123,7 +124,14 @@ public class GeneralController {
      */
     @GetMapping("/products")
     public ResponseEntity<List<Product>> getAllProducts() {
-        return ResponseEntity.ok(productService.getAllProducts());
+        List<Product> products = productService.getAllProducts();
+        List<Product> unblockedProducts = products.stream()
+                .filter(product -> !product.isBlocked()) // Assuming the Product entity has an isBlocked method
+                .toList();
+        if (unblockedProducts.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(unblockedProducts);
     }
 
     /**
@@ -159,10 +167,13 @@ public class GeneralController {
     @GetMapping("/products/by-sub-category/{subCategoryId}")
     public ResponseEntity<List<Product>> getProductsBySubCategoryId(@PathVariable Long subCategoryId) {
         List<Product> products = productService.getProductsBySubCategoryId(subCategoryId);
-        if (products.isEmpty()) {
+        List<Product> unblockedProducts = products.stream()
+                .filter(product -> !product.isBlocked()) // Assuming the Product entity has an isBlocked method
+                .toList();
+        if (unblockedProducts.isEmpty()) {
             return ResponseEntity.noContent().build(); // Return 204 if no products found
         }
-        return ResponseEntity.ok(products); // Return the list of products
+        return ResponseEntity.ok(unblockedProducts); // Return the list of products
     }
 
     /**
@@ -174,11 +185,18 @@ public class GeneralController {
      * @return a list of products matching the specified criteria
      */
     @GetMapping("/searchByBrandsAndBrandModelAndCategory/{brandId}/{brandModelId}/{categoryId}")
-    public List<Product> searchByBrandsAndBrandModelAndCategory(
+    public ResponseEntity<List<Product>> searchByBrandsAndBrandModelAndCategory(
             @PathVariable Long brandId,
             @PathVariable Long brandModelId,
             @PathVariable Long categoryId) {
-        return productService.searchByBrandsAndBrandModelAndCategory(brandId, brandModelId, categoryId);
+        List<Product> products = productService.searchByBrandsAndBrandModelAndCategory(brandId, brandModelId, categoryId);
+        List<Product> unblockedProducts = products.stream()
+                .filter(product -> !product.isBlocked()) // Assuming the Product entity has an isBlocked method
+                .toList();
+        if (unblockedProducts.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(unblockedProducts);
     }
 
     /**
@@ -189,10 +207,17 @@ public class GeneralController {
      * @return a list of products matching the specified criteria
      */
     @GetMapping("/searchByBrandAndModel/{brandId}/{brandModelId}")
-    public List<Product> searchByBrandAndModel(
+    public ResponseEntity<List<Product>> searchByBrandAndModel(
             @PathVariable Long brandId,
             @PathVariable Long brandModelId) {
-        return productService.searchByBrandAndModel(brandId, brandModelId);
+        List<Product> products = productService.searchByBrandAndModel(brandId, brandModelId);
+        List<Product> unblockedProducts = products.stream()
+                .filter(product -> !product.isBlocked()) // Assuming the Product entity has an isBlocked method
+                .toList();
+        if (unblockedProducts.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(unblockedProducts);
     }
 
     /**
@@ -203,10 +228,17 @@ public class GeneralController {
      * @return a list of products matching the specified criteria
      */
     @GetMapping("/searchByBrandAndCategory/{brandId}/{categoryId}")
-    public List<Product> searchByBrandAndCategory(
+    public ResponseEntity<List<Product>> searchByBrandAndCategory(
             @PathVariable Long brandId,
             @PathVariable Long categoryId) {
-        return productService.searchByBrandAndCategory(brandId, categoryId);
+        List<Product> products = productService.searchByBrandAndCategory(brandId, categoryId);
+        List<Product> unblockedProducts = products.stream()
+                .filter(product -> !product.isBlocked()) // Assuming the Product entity has an isBlocked method
+                .toList();
+        if (unblockedProducts.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(unblockedProducts);
     }
 
     /**
@@ -217,10 +249,17 @@ public class GeneralController {
      * @return a list of products matching the specified criteria
      */
     @GetMapping("/searchByModelAndCategory/{brandModelId}/{categoryId}")
-    public List<Product> searchByModelAndCategory(
+    public ResponseEntity<List<Product>> searchByModelAndCategory(
             @PathVariable Long brandModelId,
             @PathVariable Long categoryId) {
-        return productService.searchByModelAndCategory(brandModelId, categoryId);
+        List<Product> products = productService.searchByModelAndCategory(brandModelId, categoryId);
+        List<Product> unblockedProducts = products.stream()
+                .filter(product -> !product.isBlocked()) // Assuming the Product entity has an isBlocked method
+                .toList();
+        if (unblockedProducts.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(unblockedProducts);
     }
 
     /**
@@ -230,9 +269,16 @@ public class GeneralController {
      * @return a list of products matching the specified criteria
      */
     @GetMapping("/searchByBrand/{brandId}")
-    public List<Product> searchByBrand(
+    public ResponseEntity<List<Product>> searchByBrand(
             @PathVariable Long brandId) {
-        return productService.searchByBrand(brandId);
+        List<Product> products = productService.searchByBrand(brandId);
+        List<Product> unblockedProducts = products.stream()
+                .filter(product -> !product.isBlocked()) // Assuming the Product entity has an isBlocked method
+                .toList();
+        if (unblockedProducts.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(unblockedProducts);
     }
 
     /**
@@ -242,9 +288,16 @@ public class GeneralController {
      * @return a list of products matching the specified criteria
      */
     @GetMapping("/searchByModel/{brandModelId}")
-    public List<Product> searchByModel(
+    public ResponseEntity<List<Product>> searchByModel(
             @PathVariable Long brandModelId) {
-        return productService.searchByModel(brandModelId);
+        List<Product> products = productService.searchByModel(brandModelId);
+        List<Product> unblockedProducts = products.stream()
+                .filter(product -> !product.isBlocked()) // Assuming the Product entity has an isBlocked method
+                .toList();
+        if (unblockedProducts.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(unblockedProducts);
     }
 
     /**
@@ -254,9 +307,16 @@ public class GeneralController {
      * @return a list of products matching the specified criteria
      */
     @GetMapping("/searchByCategory/{categoryId}")
-    public List<Product> searchByCategory(
+    public ResponseEntity<List<Product>> searchByCategory(
             @PathVariable Long categoryId) {
-        return productService.searchByCategory(categoryId);
+        List<Product> products = productService.searchByCategory(categoryId);
+        List<Product> unblockedProducts = products.stream()
+                .filter(product -> !product.isBlocked()) // Assuming the Product entity has an isBlocked method
+                .toList();
+        if (unblockedProducts.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(unblockedProducts);
     }
 
 }

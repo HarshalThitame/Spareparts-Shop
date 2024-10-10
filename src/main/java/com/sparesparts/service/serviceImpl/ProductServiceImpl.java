@@ -394,5 +394,14 @@ public class ProductServiceImpl implements ProductService {
         // Save the updated product
         productRepository.save(product);
     }
+
+    @Override
+    public void updateProductStock(Long productId, int quantity) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        product.setStockQuantity(product.getStockQuantity() - quantity);
+        productRepository.save(product);
+    }
+
 }
 

@@ -131,5 +131,6 @@ public interface ProductService {
     public List<Product> getTop18Products();
     public Page<Product> getPaginatedProducts(int page, int size);
     public void deleteImageFromProduct(Long productId, Long imageId);
+    public void updateProductStock(Long productId, int quantity);
 }
 

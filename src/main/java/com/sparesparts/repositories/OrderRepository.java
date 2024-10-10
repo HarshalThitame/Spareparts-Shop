@@ -46,6 +46,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     // Example with filtering by status
     Page<Order> findByStatus(String status, Pageable pageable);
 
+    Page<Order> findByIsVorTrue(Pageable pageable);
+
 }
 
 

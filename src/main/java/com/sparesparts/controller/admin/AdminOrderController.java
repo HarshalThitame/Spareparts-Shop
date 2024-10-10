@@ -106,6 +106,7 @@ public class AdminOrderController {
     public List<Order> getUnseenOrders() {
         return orderService.getUnseenOrders();
     }
+
     @GetMapping("/new-order-count")
     public long getUnseenOrderCount() {
         return orderService.getUnseenOrderCount();
@@ -116,6 +117,13 @@ public class AdminOrderController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         return orderService.getAllOrders(page, size);
+    }
+
+    @GetMapping("/by-pagination/is-vor")
+    public Page<Order> getIsVorOrders(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return orderService.getVorOrders(page, size);
     }
 
     // Get paginated orders by status
