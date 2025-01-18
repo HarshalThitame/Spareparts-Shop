@@ -76,4 +76,16 @@ public class RetailerOrderController {
         orderService.deleteOrder(id);
         return ResponseEntity.noContent().build();
     }
+
+    /**
+     * Cancel an existing order for the authenticated retailer.
+     * @param id The ID of the order to cancel.
+     * @return Response indicating the cancellation result.
+     */
+    @DeleteMapping("/{id}/cancel")
+    public ResponseEntity<String> cancelOrder(@PathVariable Long id) {
+        orderService.cancelOrder(id); // Implement method to cancel an order
+        return ResponseEntity.ok("Order canceled successfully");
+    }
+
 }

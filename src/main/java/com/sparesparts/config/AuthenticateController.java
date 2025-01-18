@@ -1,6 +1,7 @@
 package com.sparesparts.config;
 
 
+import com.sparesparts.config.mail.EmailService;
 import com.sparesparts.entity.Cart;
 import com.sparesparts.entity.Enum.Role;
 import com.sparesparts.entity.User;
@@ -8,6 +9,7 @@ import com.sparesparts.entity.Wishlist;
 import com.sparesparts.repositories.CartRepository;
 import com.sparesparts.repositories.UserRepository;
 import com.sparesparts.service.UserService;
+import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,8 +48,8 @@ public class AuthenticateController {
     private UserRepository userRepository;
     @Autowired
     private CartRepository cartRepository;
-//    @Autowired
-//    private EmailService emailService;
+    @Autowired
+    private EmailService emailService;
 
     @PostMapping("signup")
     public ResponseEntity<User> signup(@RequestBody User user) {
@@ -184,13 +186,13 @@ public class AuthenticateController {
         return userRepository.findByUsername(username).orElseThrow();
     }
 
-//    @PostMapping("/send-otp")
-//    public ResponseEntity<Map<String, String>> sendOtp(@RequestBody String email) {
-//        String otp = emailService.sendOtpEmail(email);
-//        Map<String, String> response = new HashMap<>();
-//        response.put("otp", otp); // Creating a JSON-like map structure
-//        return ResponseEntity.ok(response); // Will be converted to JSON automatically
-//    }
+    @PostMapping("/send-otp")
+    public ResponseEntity<Map<String, String>> sendOtp(@RequestBody String email) {
+        String otp = emailService.sendOtpEmail(email);
+        Map<String, String> response = new HashMap<>();
+        response.put("otp", otp); // Creating a JSON-like map structure
+        return ResponseEntity.ok(response); // Will be converted to JSON automatically
+    }
 
 
     @PostMapping("/is-present")
@@ -199,6 +201,22 @@ public class AuthenticateController {
         User user = userService.findByEmail(email);
         return ResponseEntity.ok(Objects.requireNonNullElseGet(user, User::new));
 
+    }
+
+    @Data
+    public static class TimeSpent{
+        Long userId;
+        Long totalTimeSpent;
+    }
+
+    @PostMapping("/update-time-spent")
+    public void updateTimeSpend(@RequestBody TimeSpent obj) {
+        System.out.println(obj);
+        Long userID = obj.userId;
+        Optional<User> user = userService.findById(userID);
+        long totalTimeSpent = user.get().getTotalTimeSpent();
+        user.get().setTotalTimeSpent(totalTimeSpent+obj.totalTimeSpent);
+        userRepository.save(user.get());
     }
 
 }

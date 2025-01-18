@@ -1,8 +1,11 @@
 package com.sparesparts.service;
 
 
+import com.sparesparts.entity.Enum.OrderStatus;
 import com.sparesparts.entity.Order;
+import com.sparesparts.entity.User;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -91,6 +94,7 @@ public interface OrderService {
     public long getUnseenOrderCount();
 
     public Page<Order> getAllOrders(int page, int size);
-    public Page<Order> getOrdersByStatus(String status, int page, int size);
+    public Page<Order> getOrdersByStatus(OrderStatus status, int page, int size);
     public Page<Order> getVorOrders(int page, int size);
+    public Object[] getTotalOrdersCountAndSpentByUser(User user);
 }

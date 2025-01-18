@@ -84,8 +84,9 @@ public class CustomerOrderController {
      * @return Response indicating the cancellation result.
      */
     @DeleteMapping("/{id}/cancel")
-    public ResponseEntity<String> cancelOrder(@PathVariable Long id) {
+    public ResponseEntity<?> cancelOrder(@PathVariable Long id) {
         orderService.cancelOrder(id); // Implement method to cancel an order
         return ResponseEntity.ok("Order canceled successfully");
     }
+
 }

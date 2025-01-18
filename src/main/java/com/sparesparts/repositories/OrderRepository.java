@@ -1,6 +1,8 @@
 package com.sparesparts.repositories;
 
+import com.sparesparts.entity.Enum.OrderStatus;
 import com.sparesparts.entity.Order;
+import com.sparesparts.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -44,9 +46,15 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Page<Order> findAll(Pageable pageable);
 
     // Example with filtering by status
-    Page<Order> findByStatus(String status, Pageable pageable);
+    Page<Order> findByStatus(OrderStatus status, Pageable pageable);
 
     Page<Order> findByIsVorTrue(Pageable pageable);
+
+    // Query to get total orders count and total spent by a specific user
+    @Query("SELECT COUNT(o) AS totalCount, SUM(o.totalAmount) AS totalSpent " +
+            "FROM Order o " +
+            "WHERE o.user = :user AND o.status = 'PAID'")
+    Object[] findTotalOrdersCountAndSpentByUser(@Param("user") User user);
 
 }
 

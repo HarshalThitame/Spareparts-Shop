@@ -1,12 +1,9 @@
 package com.sparesparts.service.serviceImpl;
 
 
+import com.sparesparts.entity.*;
 import com.sparesparts.entity.Enum.OrderStatus;
 import com.sparesparts.entity.Enum.Role;
-import com.sparesparts.entity.Order;
-import com.sparesparts.entity.OrderItem;
-import com.sparesparts.entity.Product;
-import com.sparesparts.entity.ShippingAddress;
 import com.sparesparts.repositories.OrderItemRepository;
 import com.sparesparts.repositories.OrderRepository;
 import com.sparesparts.repositories.ProductRepository;
@@ -335,7 +332,7 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public Page<Order> getOrdersByStatus(String status, int page, int size) {
+    public Page<Order> getOrdersByStatus(OrderStatus status, int page, int size) {
         Pageable pageable = PageRequest.of(page, size,Sort.by(Sort.Direction.DESC,"createdAt"));
         return orderRepository.findByStatus(status, pageable);
     }
@@ -344,6 +341,11 @@ public class OrderServiceImpl implements OrderService {
     public Page<Order> getVorOrders(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         return orderRepository.findByIsVorTrue(pageable);
+    }
+
+    @Override
+    public Object[] getTotalOrdersCountAndSpentByUser(User user) {
+        return orderRepository.findTotalOrdersCountAndSpentByUser(user);
     }
 
 }

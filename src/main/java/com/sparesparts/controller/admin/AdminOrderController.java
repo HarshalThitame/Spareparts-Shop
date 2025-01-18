@@ -3,11 +3,14 @@ package com.sparesparts.controller.admin;
 
 import com.sparesparts.config.mail.EmailData;
 import com.sparesparts.config.mail.EmailService;
+import com.sparesparts.entity.Enum.OrderStatus;
 import com.sparesparts.entity.Order;
 import com.sparesparts.entity.Product;
 import com.sparesparts.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -129,10 +132,22 @@ public class AdminOrderController {
     // Get paginated orders by status
     @GetMapping("/status/by-pagination")
     public Page<Order> getOrdersByStatus(
-            @RequestParam String status,
+            @RequestParam OrderStatus status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         return orderService.getOrdersByStatus(status, page, size);
     }
+    @GetMapping("/cancelled")
+    public Page<Order> getCancelledOrders(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return orderService.getOrdersByStatus(OrderStatus.CANCELLED, page, size);
+    }
 
+    @GetMapping("/unpaid")
+    public Page<Order> getUnpaidOrders(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return orderService.getOrdersByStatus(OrderStatus.UNPAID, page, size);
+    }
 }

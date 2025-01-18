@@ -147,4 +147,15 @@ public class AdminCategoryController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @PutMapping("/upload-sub-category-image")
+    public ResponseEntity<SubCategory> uploadSubcategoryImage(@RequestBody SubCategory subCategory){
+        Optional<SubCategory> existingSubCategory = subCategoryService.getSubCategoryById(subCategory.getId());
+        if (existingSubCategory.isPresent()) {
+            existingSubCategory.get().setSubCategoryImage(subCategory.getSubCategoryImage());
+            SubCategory savedSubCategory = subCategoryService.saveSubCategory(existingSubCategory.get());
+            return ResponseEntity.ok(savedSubCategory);
+        }
+        return ResponseEntity.notFound().build();
+    }
 }

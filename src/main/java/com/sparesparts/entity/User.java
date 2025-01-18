@@ -36,6 +36,8 @@ public class User {
     private String city;
     private String state;
     private String postalCode;
+    private long totalTimeSpent; // Time in milliseconds
+
 
     private boolean isActive;  // To disable user if needed
     @CreationTimestamp

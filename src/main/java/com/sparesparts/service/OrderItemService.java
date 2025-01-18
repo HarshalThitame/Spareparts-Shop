@@ -1,6 +1,7 @@
 package com.sparesparts.service;
 
 import com.sparesparts.entity.OrderItem;
+import com.sparesparts.entity.User;
 
 import java.util.List;
 
@@ -48,4 +49,5 @@ public interface OrderItemService {
     List<OrderItem> getOrderItemsByOrderId(Long orderId);
 
 
+    List<Object[]> getTopPurchasedProductsByUser(User user);
 }

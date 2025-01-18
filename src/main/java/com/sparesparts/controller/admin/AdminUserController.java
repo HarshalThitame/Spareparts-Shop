@@ -3,6 +3,8 @@ package com.sparesparts.controller.admin;
 import com.sparesparts.entity.Enum.Role;
 import com.sparesparts.entity.User;
 import com.sparesparts.repositories.UserRepository;
+import com.sparesparts.service.OrderItemService;
+import com.sparesparts.service.OrderService;
 import com.sparesparts.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,10 @@ public class AdminUserController {
     private UserService userService;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private OrderService orderService;
+    @Autowired
+    private OrderItemService orderItemService;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -73,6 +79,30 @@ public class AdminUserController {
         existingUser.get().setActive(active);
         User updatedUser = userService.updateUser(existingUser.get());
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+    }
+
+    @GetMapping("/user-details/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        Optional<User> existingUser = userService.findById(id);
+        return existingUser.map(user -> new ResponseEntity<>(user, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping("/total/{userId}")
+    public Object[] getTotalOrdersCountAndSpent(@PathVariable Long userId) {
+        User user = userService.getUserById(userId);
+        if (user == null) {
+            return new Object[0];
+        }
+        return orderService.getTotalOrdersCountAndSpentByUser(user);
+    }
+
+    @GetMapping("/most-purchased-products/{userId}")
+    public List<Object[]> getTopPurchasedProductsByUser(@PathVariable Long userId) {
+        User user = userService.getUserById(userId);
+        if (user == null) {
+            return new ArrayList<>();
+        }
+        return orderItemService.getTopPurchasedProductsByUser(user);
     }
 
 

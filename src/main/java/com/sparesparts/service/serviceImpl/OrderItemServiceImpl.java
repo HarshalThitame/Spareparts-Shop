@@ -2,6 +2,7 @@ package com.sparesparts.service.serviceImpl;
 
 
 import com.sparesparts.entity.OrderItem;
+import com.sparesparts.entity.User;
 import com.sparesparts.repositories.OrderItemRepository;
 import com.sparesparts.service.OrderItemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +80,11 @@ public class OrderItemServiceImpl implements OrderItemService {
         return orderItemRepository.findByOrderId(orderId);
     }
 
+    @Override
+    public List<Object[]> getTopPurchasedProductsByUser(User user) {
+        List<Object[]> results = orderItemRepository.findTopPurchasedProductsByUser(user);
+        return results.size() > 3 ? results.subList(0, 3) : results;
+    }
     @Override
     public List<OrderItem> getAllOrderItems() {
         return orderItemRepository.findAll();
